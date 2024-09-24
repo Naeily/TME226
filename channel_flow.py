@@ -79,13 +79,13 @@ plt.plot(x1_2d[:,2],v1_2d[:,2], label = 'v1_{edge}')
 #plt.plot(x1_2d[:,2],dv1dx1_wall, label = 'dv1dx1_{edge}')
 plt.legend()
 plt.show()
-def xi(x1_index):
+def xi(x1_index): #replace using np.integrate maybe?
    dx2 = np.zeros((28))
    dx2[1:27] = (x2_2d[0,2:]-x2_2d[0,0:-2])/2
    dx2[0] = (x2_2d[0,1]-x2_2d[0,0])/2
    dx2[27] = (x2_2d[0,-1]-x2_2d[0,-2])/2
    return sum(v1_2d[x1_index,:]*dx2)
-plt.plot(x1_2d[:,0], [xi(i) for i in range(len(x1_2d[:,0]))])
+plt.plot(x1_2d[:,0], [xi(i) for i in range(ni)])
 
 
 
@@ -100,12 +100,54 @@ plt.legend()
 
 
 #%% C5
-dv2dx1_2d = np.gradient(v2_2d,x1_2d) #list comprehension
-dv1dx2_2d = np.gradient(v1_2d,x2_2d) #list comprehension
+dv2dx1_2d = np.zeros((ni,nj))
+dv1dx2_2d = np.zeros((ni,nj))
+for i in range(nj):
+   dv2dx1_2d[:,i] = np.gradient(v2_2d[:,i],x1_2d[:,i]) #list comprehension
+for i in range(ni):
+   dv1dx2_2d = np.gradient(v1_2d[i,:],x2_2d[i,:]) #list comprehension
 w_3_2d = dv2dx1_2d - dv1dx2_2d
-plt.imshow(w_3_2d, cmap='hot', interpolation='nearest')
+plt.imshow(w_3_2d.T, cmap='hot', interpolation='nearest')
 plt.colorbar()
 plt.show()
+# Chnage from heatmap to plot of W_3_2d for some x1 value in fully developed region waowza
+
+#%% C6
+S_12_2d = 1/2*(dv1dx2_2d + dv2dx1_2d)
+Omega_12_2d = 1/2*(dv1dx2_2d - dv2dx1_2d)
+plt.imshow(S_12_2d.T, cmap='hot', interpolation='nearest')
+plt.colorbar()
+plt.show()
+plt.imshow(Omega_12_2d.T, cmap='hot', interpolation='nearest')
+plt.colorbar()
+plt.show()
+
+#%% C7
+dv2dx2_2d = np.zeros((ni,nj))
+dv1dx1_2d = np.zeros((ni,nj))
+for i in range(nj):
+   dv1dx1_2d[:,i] = np.gradient(v1_2d[:,i],x1_2d[:,i]) #list comprehension
+for i in range(ni):
+   dv2dx2_2d = np.gradient(v2_2d[i,:],x2_2d[i,:]) #list comprehension
+phi = mu*(np.square(dv1dx2_2d) + np.square(dv2dx1_2d) + np.square(dv1dx1_2d) + np.square(dv2dx2_2d))
+
+plt.imshow(phi.T, cmap='hot', interpolation='nearest')
+plt.colorbar()
+plt.show()
+
+#plot of difference in phi between inlet and outlet
+plt.plot(phi[-1,:]-phi[0,:], range(nj))
+#we can see that there is slightly less overall dissipation which makes sense since it has lost energy travelign from entrence to exit
+
+
+
+
+#%% C8
+
+
+
+
+
 
 #%%
 #************
