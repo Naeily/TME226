@@ -99,7 +99,13 @@ plt.plot(x1_2d[:,2],v2_2d[:,2], label = 'v2_{edge}')
 plt.legend()
 
 
-
+#%% C5
+dv2dx1_2d = np.gradient(v2_2d,x1_2d) #list comprehension
+dv1dx2_2d = np.gradient(v1_2d,x2_2d) #list comprehension
+w_3_2d = dv2dx1_2d - dv1dx2_2d
+plt.imshow(w_3_2d, cmap='hot', interpolation='nearest')
+plt.colorbar()
+plt.show()
 
 #%%
 #************
