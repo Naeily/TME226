@@ -123,27 +123,64 @@ plt.colorbar()
 plt.show()
 
 #%% C7
+c_p = 1006 #kJ/kg 20c 1bar
+rho = 1.204 #kg/m^3 20c 1atm ########################Maybe a bit wrong assuming aprox atm preassure lmaooooooooooo
+T_in = 20 # same as T_b_in
 dv2dx2_2d = np.zeros((ni,nj))
 dv1dx1_2d = np.zeros((ni,nj))
 for i in range(nj):
    dv1dx1_2d[:,i] = np.gradient(v1_2d[:,i],x1_2d[:,i]) #list comprehension
 for i in range(ni):
-   dv2dx2_2d = np.gradient(v2_2d[i,:],x2_2d[i,:]) #list comprehension
-phi = mu*(np.square(dv1dx2_2d) + np.square(dv2dx1_2d) + np.square(dv1dx1_2d) + np.square(dv2dx2_2d))
+   dv2dx2_2d[i,:] = np.gradient(v2_2d[i,:],x2_2d[i,:]) #list comprehension
 
-plt.imshow(phi.T, cmap='hot', interpolation='nearest')
+tau_11_2d = 2*mu*dv1dx1_2d
+tau_12_2d = mu*(dv1dx2_2d + dv2dx1_2d)
+tau_22_2d = 2*mu*dv2dx2_2d
+#skriv om phi_2d med hjälp av tau
+phi_2d = ( tau_11_2d*dv1dx1_2d + tau_12_2d*dv1dx2_2d + tau_12_2d*dv2dx1_2d + tau_22_2d*dv2dx2_2d )
+#phi_2d = mu*(np.square(dv1dx2_2d) + np.square(dv2dx1_2d) + 2*(np.square(dv1dx1_2d) + np.square(dv2dx2_2d) + dv1dx2_2d*dv2dx1_2d))
+
+plt.imshow(phi_2d.T, cmap='hot', interpolation='nearest')
 plt.colorbar()
 plt.show()
 
 #plot of difference in phi between inlet and outlet
-plt.plot(phi[-1,:]-phi[0,:], range(nj))
+plt.plot(phi_2d[-1,:]-phi_2d[0,:], range(nj))
 #we can see that there is slightly less overall dissipation which makes sense since it has lost energy travelign from entrence to exit
-
-
-
+phi_integral = np.trapz(np.array([np.trapz(phi_2d[:,i],x1_2d[:,i]) for i in range(nj)]),x2_2d[0,:])
+T_b_out = (phi_integral/(c_p*rho) + xi(0)*T_in) / (xi(ni-1))
+Delta_T_b = T_b_out - T_in
 
 #%% C8
+tau = np.zeros((2,2,ni,nj))
+n = np.zeros((2,2,ni,nj))
+lambda_ = np.zeros((2,ni,nj))
+for i in range(ni):
+   for j in range(nj):
+      tau[:,:,i,j] = np.array(( [tau_11_2d[i,j],tau_12_2d[i,j]] , [tau_12_2d[i,j],tau_22_2d[i,j]] ))
+      lambda_[:,i,j], n[:,:,i,j] = np.linalg.eig(tau[:,:,i,j])
 
+plt.plot(x2_2d[index_99,:],lambda_[0,index_99,:], label = 'first eigenvalue')
+plt.plot(x2_2d[index_99,:],lambda_[1,index_99,:], label = 'second eigenvalue')
+plt.legend()
+plt.show() # actually the eigenvalue for a corresponding eigenvector is lienar similar to tau 12 since eigenvectors are the same for all x_2 but magnitude differs
+# it is just that linalg.eig mixes the eigenvectors around from time to time hence the jumps in the plot
+for i in [0,1]:
+   for j in [0,1]:
+      plt.plot(x2_2d[index_99,:],tau[i,j,index_99,:],label = f'tau_{str(i+1) + str(j+1)}')
+      plt.legend()
+      plt.show()
+
+
+#%% C9
+plt.quiver(x1_2d[::5,:],x2_2d[::5,:],n[0,0,::5,:],n[1,0,::5,:],scale = 70)
+plt.title('Normal vector')
+plt.show()
+#t = np.zeros((2,ni,nj))
+t = n[:,0,:,:]*lambda_[0,:,:] + n[:,1,:,:]*lambda_[1,:,:]
+plt.quiver(x1_2d[::5,:],x2_2d[::5,:],t[0,::5,:],t[1,::5,:])
+plt.title('Traction')
+plt.show()
 
 
 
