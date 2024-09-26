@@ -80,16 +80,11 @@ plt.plot(x1_2d[:,2],v1_2d[:,2], label = 'v1_{edge}')
 #plt.plot(x1_2d[:,2],dv1dx1_wall, label = 'dv1dx1_{edge}')
 plt.legend()
 plt.show()
-def xi(x1_index): #replace using np.integrate maybe?
-   dx2 = np.zeros((28))
-   dx2[1:27] = (x2_2d[0,2:]-x2_2d[0,0:-2])/2
-   dx2[0] = (x2_2d[0,1]-x2_2d[0,0])/2
-   dx2[27] = (x2_2d[0,-1]-x2_2d[0,-2])/2
-   return sum(v1_2d[x1_index,:]*dx2)
+
+def xi(x1_index):
+      return np.trapz(v1_2d[x1_index,:],x2_2d[0,:])
+
 plt.plot(x1_2d[:,0], [xi(i) for i in range(ni)])
-
-
-
 
 
 #%% C4
@@ -124,7 +119,7 @@ plt.colorbar()
 plt.show()
 
 #%% C7
-c_p = 1006 #kJ/kg 20c 1bar
+c_p = 1006 #J/kg 20c 1bar
 rho = 1.204 #kg/m^3 20c 1atm ########################Maybe a bit wrong assuming aprox atm preassure lmaooooooooooo
 T_in = 20 # same as T_b_in
 dv2dx2_2d = np.zeros((ni,nj))
@@ -134,9 +129,11 @@ for i in range(nj):
 for i in range(ni):
    dv2dx2_2d[i,:] = np.gradient(v2_2d[i,:],x2_2d[i,:]) #list comprehension
 
-tau_11_2d = 2*mu*dv1dx1_2d
+
+# Kankse inte ha tau som np.zeros för 11 och 22
+tau_11_2d = np.zeros((ni,nj))#2*mu*dv1dx1_2d - 1/3*mu*(dv1dx1_2d+dv2dx2_2d)
 tau_12_2d = mu*(dv1dx2_2d + dv2dx1_2d)
-tau_22_2d = 2*mu*dv2dx2_2d
+tau_22_2d = np.zeros((ni,nj))#2*mu*dv2dx2_2d - 1/3*mu*(dv1dx1_2d+dv2dx2_2d)
 #skriv om phi_2d med hjälp av tau
 phi_2d = ( tau_11_2d*dv1dx1_2d + tau_12_2d*dv1dx2_2d + tau_12_2d*dv2dx1_2d + tau_22_2d*dv2dx2_2d )
 #phi_2d = mu*(np.square(dv1dx2_2d) + np.square(dv2dx1_2d) + 2*(np.square(dv1dx1_2d) + np.square(dv2dx2_2d) + dv1dx2_2d*dv2dx1_2d))
@@ -149,8 +146,8 @@ plt.show()
 plt.plot(phi_2d[-1,:]-phi_2d[0,:], range(nj))
 #we can see that there is slightly less overall dissipation which makes sense since it has lost energy travelign from entrence to exit
 phi_integral = np.trapz(np.array([np.trapz(phi_2d[:,i],x1_2d[:,i]) for i in range(nj)]),x2_2d[0,:])
-T_b_out = (phi_integral/(c_p*rho) + xi(0)*T_in) / (xi(ni-1))
-Delta_T_b = T_b_out - T_in
+Delta_T_b = phi_integral/(c_p*rho*xi(ni-1))
+# do the same derivation, but just assume xi(-1) = xi(0) xdedddd
 
 #%% C8
 tau = np.zeros((2,2,ni,nj))
@@ -178,11 +175,15 @@ plt.quiver(x1_2d[::5,:],x2_2d[::5,:],n[0,0,::5,:],n[1,0,::5,:],scale = 70)
 plt.title('Normal vector')
 plt.show()
 #t = np.zeros((2,ni,nj))
-t = n[:,0,:,:]*lambda_[0,:,:] + n[:,1,:,:]*lambda_[1,:,:]
-plt.quiver(x1_2d[::5,:],x2_2d[::5,:],t[0,::5,:],t[1,::5,:])
-plt.title('Traction')
+t_1 = n[:,0,:,:]*lambda_[0,:,:] #+ n[:,1,:,:]*lambda_[1,:,:]
+plt.quiver(x1_2d[::5,:],x2_2d[::5,:],t_1[0,::5,:],t_1[1,::5,:])
+plt.title('Traction_1')
 plt.show()
 
+t_2 = n[:,1,:,:]*lambda_[1,:,:]
+plt.quiver(x1_2d[::5,:],x2_2d[::5,:],t_2[0,::5,:],t_2[1,::5,:])
+plt.title('Traction_2')
+plt.show()
 
 
 
