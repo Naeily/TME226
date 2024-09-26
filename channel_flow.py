@@ -45,6 +45,7 @@ x1e_99 = x1_2d[index_99,0]
 # plotta dessa två mot teoretisk: v1_2d[index_001,:], v1_2d[index_99,:]
 # kolla på v2_2d[index_001,x2=h/4] 
 
+#duxk you
 
 #%% C2
 mu = 1.81 * 10**-5
