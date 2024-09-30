@@ -106,9 +106,35 @@ w_3_2d = dv2dx1_2d - dv1dx2_2d
 plt.imshow(w_3_2d.T, cmap='hot', interpolation='nearest')
 plt.colorbar()
 plt.show()
-# Chnage from heatmap to plot of W_3_2d for some x1 value in fully developed region waowza
 
-#%% C6
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(w_3_2d[index_99,:],x2_2d[index_99,:])
+plt.title('$\omega_3$ for the fully developed flow')
+plt.xlabel('$\omega_3$') 
+plt.ylabel('$x_2$')
+plt.show()
+#plt.savefig('C5_w_3_fully_developed.eps')
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(w_3_2d[0,:],x2_2d[0,:])
+plt.title('$\omega_3$ for the inflow')
+plt.xlabel('$\omega_3$') 
+plt.ylabel('$x_2$')
+plt.show()
+#plt.savefig('C5_w_3_inflow.eps')
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(w_3_2d[int(index_99/2),:],x2_2d[int(index_99/2),:])
+plt.title('$\omega_3$ for the developing flow')
+plt.xlabel('$\omega_3$') 
+plt.ylabel('$x_2$')
+plt.show()
+#plt.savefig('C5_w_3_developing.eps')
+
+#%% C6 #Ask if we are supposed to plot at fully developed flow?
 S_12_2d = 1/2*(dv1dx2_2d + dv2dx1_2d)
 Omega_12_2d = 1/2*(dv1dx2_2d - dv2dx1_2d)
 plt.imshow(S_12_2d.T, cmap='hot', interpolation='nearest')
@@ -117,6 +143,24 @@ plt.show()
 plt.imshow(Omega_12_2d.T, cmap='hot', interpolation='nearest')
 plt.colorbar()
 plt.show()
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(Omega_12_2d[index_99,:],x2_2d[index_99,:])
+plt.title('$\Omega_{12}$ for the fully developed flow')
+plt.xlabel('$\Omega_{12}$') 
+plt.ylabel('$x_2$')
+plt.show()
+#plt.savefig('C6_Omega12.eps')
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(S_12_2d[index_99,:],x2_2d[index_99,:])
+plt.title('$S_{12}$ for the fully developed flow')
+plt.xlabel('$S_{12}$') 
+plt.ylabel('$x_2$')
+plt.show()
+#plt.savefig('C6_S12.eps')
 
 #%% C7
 c_p = 1006 #J/kg 20c 1bar
@@ -203,7 +247,8 @@ plt.axis([0,1.5,0,0.01]) # set x & y axis
 plt.xlabel('$V_1$') 
 plt.ylabel('$x_2$') 
 plt.text(0.04,0.004,'$x_1=0.008$ and $0.34$') # show this text at (0.04,0.004)
-plt.savefig('velprof.eps')
+plt.show()
+#plt.savefig('velprof.eps')
 
 ################################ contour plot of v1
 fig1,ax1 = plt.subplots()
@@ -214,7 +259,8 @@ plt.ylabel("$x_2$")
 plt.clim(0.1,1.)
 plt.title("contour v_1 plot")
 plt.axis([0,0.1,0,0.011]) # zoom-in on the first 0.1m from the inlet
-plt.savefig('v1_contour.eps')
+plt.show()
+#plt.savefig('v1_contour.eps')
 
 ################################ compute the velocity gradient dv_1/dx_2
 fig1,ax1 = plt.subplots()
@@ -247,5 +293,6 @@ plt.title('Velocity gradient')
 plt.xlabel('$\partial v_1/\partial x_2$')
 plt.ylabel('$x_2$') 
 plt.text(-380,0.004,'$x_1=0.52$')
-plt.savefig('v1_grad.eps')
+plt.show()
+#plt.savefig('v1_grad.eps')
 
