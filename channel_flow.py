@@ -101,7 +101,7 @@ dv1dx2_2d = np.zeros((ni,nj))
 for i in range(nj):
    dv2dx1_2d[:,i] = np.gradient(v2_2d[:,i],x1_2d[:,i]) #list comprehension
 for i in range(ni):
-   dv1dx2_2d = np.gradient(v1_2d[i,:],x2_2d[i,:]) #list comprehension
+   dv1dx2_2d[i,:] = np.gradient(v1_2d[i,:],x2_2d[i,:]) #list comprehension
 w_3_2d = dv2dx1_2d - dv1dx2_2d
 plt.imshow(w_3_2d.T, cmap='hot', interpolation='nearest')
 plt.colorbar()
@@ -139,6 +139,7 @@ phi_2d = ( tau_11_2d*dv1dx1_2d + tau_12_2d*dv1dx2_2d + tau_12_2d*dv2dx1_2d + tau
 #phi_2d = mu*(np.square(dv1dx2_2d) + np.square(dv2dx1_2d) + 2*(np.square(dv1dx1_2d) + np.square(dv2dx2_2d) + dv1dx2_2d*dv2dx1_2d))
 
 plt.imshow(phi_2d.T, cmap='hot', interpolation='nearest')
+plt.title('Phi')
 plt.colorbar()
 plt.show()
 
