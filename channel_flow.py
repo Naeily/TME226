@@ -113,8 +113,8 @@ plt.plot(w_3_2d[index_99,:],x2_2d[index_99,:])
 plt.title('$\omega_3$ for the fully developed flow')
 plt.xlabel('$\omega_3$') 
 plt.ylabel('$x_2$')
-plt.show()
 #plt.savefig('C5_w_3_fully_developed.eps')
+plt.show()
 
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.20,bottom=0.20)
@@ -122,8 +122,9 @@ plt.plot(w_3_2d[0,:],x2_2d[0,:])
 plt.title('$\omega_3$ for the inflow')
 plt.xlabel('$\omega_3$') 
 plt.ylabel('$x_2$')
-plt.show()
 #plt.savefig('C5_w_3_inflow.eps')
+plt.show()
+
 
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.20,bottom=0.20)
@@ -131,8 +132,9 @@ plt.plot(w_3_2d[int(index_99/2),:],x2_2d[int(index_99/2),:])
 plt.title('$\omega_3$ for the developing flow')
 plt.xlabel('$\omega_3$') 
 plt.ylabel('$x_2$')
-plt.show()
 #plt.savefig('C5_w_3_developing.eps')
+plt.show()
+
 
 #%% C6 #Ask if we are supposed to plot at fully developed flow?
 S_12_2d = 1/2*(dv1dx2_2d + dv2dx1_2d)
@@ -150,8 +152,9 @@ plt.plot(Omega_12_2d[index_99,:],x2_2d[index_99,:])
 plt.title('$\Omega_{12}$ for the fully developed flow')
 plt.xlabel('$\Omega_{12}$') 
 plt.ylabel('$x_2$')
-plt.show()
 #plt.savefig('C6_Omega12.eps')
+plt.show()
+
 
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.20,bottom=0.20)
@@ -159,8 +162,8 @@ plt.plot(S_12_2d[index_99,:],x2_2d[index_99,:])
 plt.title('$S_{12}$ for the fully developed flow')
 plt.xlabel('$S_{12}$') 
 plt.ylabel('$x_2$')
-plt.show()
 #plt.savefig('C6_S12.eps')
+plt.show()
 
 #%% C7
 c_p = 1006 #J/kg 20c 1bar
