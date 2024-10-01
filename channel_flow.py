@@ -187,6 +187,19 @@ plt.title('Phi')
 plt.colorbar()
 plt.show()
 
+#%% fråga om denna och fixa denna
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.25,bottom=0.20)
+plt.contourf(x1_2d,x2_2d,phi_2d,10000)
+plt.xlabel("$x_1$")
+plt.ylabel("$x_2$")
+plt.clim(0.1,10.)
+plt.title("contour phi plot")
+plt.axis([0,0.1,0,0.011]) # zoom-in on the first 0.1m from the inlet
+plt.colorbar()
+plt.show()
+#plt.savefig('v1_grad.eps')
+#%%
 #plot of difference in phi between inlet and outlet
 plt.plot(phi_2d[-1,:]-phi_2d[0,:], range(nj))
 #we can see that there is slightly less overall dissipation which makes sense since it has lost energy travelign from entrence to exit
@@ -296,3 +309,5 @@ plt.text(-380,0.004,'$x_1=0.52$')
 plt.show()
 #plt.savefig('v1_grad.eps')
 
+
+# %%
