@@ -106,7 +106,7 @@ w_3_2d = dv2dx1_2d - dv1dx2_2d
 plt.imshow(w_3_2d.T, cmap='hot', interpolation='nearest')
 plt.colorbar()
 plt.show()
-
+#%%
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.20,bottom=0.20)
 plt.plot(w_3_2d[index_99,:],x2_2d[index_99,:])
@@ -115,7 +115,7 @@ plt.xlabel('$\omega_3$')
 plt.ylabel('$x_2$')
 #plt.savefig('C5_w_3_fully_developed.eps')
 plt.show()
-
+#%%
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.20,bottom=0.20)
 plt.plot(w_3_2d[0,:],x2_2d[0,:])
@@ -178,9 +178,9 @@ for i in range(ni):
 
 
 # Kankse inte ha tau som np.zeros för 11 och 22
-tau_11_2d = np.zeros((ni,nj))#2*mu*dv1dx1_2d - 1/3*mu*(dv1dx1_2d+dv2dx2_2d)
+tau_11_2d = 2*mu*dv1dx1_2d - 1/3*mu*(dv1dx1_2d+dv2dx2_2d) #np.zeros((ni,nj))
 tau_12_2d = mu*(dv1dx2_2d + dv2dx1_2d)
-tau_22_2d = np.zeros((ni,nj))#2*mu*dv2dx2_2d - 1/3*mu*(dv1dx1_2d+dv2dx2_2d)
+tau_22_2d = 2*mu*dv2dx2_2d - 1/3*mu*(dv1dx1_2d+dv2dx2_2d) #np.zeros((ni,nj))
 #skriv om phi_2d med hjälp av tau
 phi_2d = ( tau_11_2d*dv1dx1_2d + tau_12_2d*dv1dx2_2d + tau_12_2d*dv2dx1_2d + tau_22_2d*dv2dx2_2d )
 #phi_2d = mu*(np.square(dv1dx2_2d) + np.square(dv2dx1_2d) + 2*(np.square(dv1dx1_2d) + np.square(dv2dx2_2d) + dv1dx2_2d*dv2dx1_2d))
