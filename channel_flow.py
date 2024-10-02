@@ -76,8 +76,8 @@ plt.subplots_adjust(left=0.20,bottom=0.20)
 plt.plot(x1_2d[:,13],v1_2d[:,13], label = 'v1_{center}')
 plt.plot(x1_2d[:,2],v1_2d[:,2], label = 'v1_{edge}')
 
-#plt.plot(x1_2d[:,13],dv1dx1_center, label = 'dv1dx1_{center}')
-#plt.plot(x1_2d[:,2],dv1dx1_wall, label = 'dv1dx1_{edge}')
+plt.plot(x1_2d[:,13],dv1dx1_center, label = 'dv1dx1_{center}')
+plt.plot(x1_2d[:,2],dv1dx1_wall, label = 'dv1dx1_{edge}')
 plt.legend()
 plt.show()
 
@@ -109,16 +109,20 @@ plt.show()
 #%%
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.20,bottom=0.20)
-plt.plot(w_3_2d[index_99,:],x2_2d[index_99,:])
-plt.title('$\omega_3$ for the fully developed flow')
+plt.plot(w_3_2d[index_99,:],x2_2d[index_99,:],label = 'fully developed')
+plt.plot(w_3_2d[int(index_99/2),:],x2_2d[int(index_99/2),:],label = 'developing flow')
+plt.plot(w_3_2d[0,:],x2_2d[0,:],label = 'inflow')
+plt.title('Vorticity for the flow')
 plt.xlabel('$\omega_3$') 
-plt.ylabel('$x_2$')
+plt.ylabel('Height [m]')
+plt.legend(prop = {'size':12})
 #plt.savefig('C5_w_3_fully_developed.eps')
 plt.show()
 #%%
+"""
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.20,bottom=0.20)
-plt.plot(w_3_2d[0,:],x2_2d[0,:])
+plt.plot(w_3_2d[0,:],x2_2d[0,:],label = 'inflow')
 plt.title('$\omega_3$ for the inflow')
 plt.xlabel('$\omega_3$') 
 plt.ylabel('$x_2$')
@@ -128,17 +132,18 @@ plt.show()
 
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.20,bottom=0.20)
-plt.plot(w_3_2d[int(index_99/2),:],x2_2d[int(index_99/2),:])
+plt.plot(w_3_2d[int(index_99/2),:],x2_2d[int(index_99/2),:],label = 'developing flow')
 plt.title('$\omega_3$ for the developing flow')
 plt.xlabel('$\omega_3$') 
 plt.ylabel('$x_2$')
 #plt.savefig('C5_w_3_developing.eps')
 plt.show()
-
+"""
 
 #%% C6 #Ask if we are supposed to plot at fully developed flow?
 S_12_2d = 1/2*(dv1dx2_2d + dv2dx1_2d)
 Omega_12_2d = 1/2*(dv1dx2_2d - dv2dx1_2d)
+"""
 plt.imshow(S_12_2d.T, cmap='hot', interpolation='nearest')
 plt.colorbar()
 plt.show()
@@ -164,6 +169,28 @@ plt.xlabel('$S_{12}$')
 plt.ylabel('$x_2$')
 #plt.savefig('C6_S12.eps')
 plt.show()
+"""
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(S_12_2d[index_99,:],x2_2d[index_99,:],label = '$S_{12}$')
+plt.plot(Omega_12_2d[index_99,:],x2_2d[index_99,:],label = '$\Omega_{12}$')
+plt.title('Strain-rate and vorticity tensor for the fully developed flow',fontsize = 16)
+plt.xlabel('S and $\Omega$') 
+plt.ylabel('Height [m]')
+plt.legend(prop = {'size':15})
+#plt.savefig('save fig är sämst använd ej!!!!!!!!!.dhgoshit_format')
+plt.show()
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(w_3_2d[index_99,:],x2_2d[index_99,:],label = '$\omega_3$')
+plt.plot(Omega_12_2d[index_99,:],x2_2d[index_99,:],label = '$\Omega_{12}$')
+plt.title('Vorticity vector and tensor for the fully developed flow',fontsize = 16)
+plt.xlabel('$\omega_3$ and $\Omega_{12}$') 
+plt.ylabel('Height [m]')
+plt.legend(prop = {'size':12})
+#plt.savefig('save fig är sämst använd ej!!!!!!!!!.dhgoshit_format')
+plt.show()
 
 #%% C7
 c_p = 1006 #J/kg 20c 1bar
@@ -184,22 +211,31 @@ tau_22_2d = 2*mu*dv2dx2_2d - 1/3*mu*(dv1dx1_2d+dv2dx2_2d) #np.zeros((ni,nj))
 #skriv om phi_2d med hjälp av tau
 phi_2d = ( tau_11_2d*dv1dx1_2d + tau_12_2d*dv1dx2_2d + tau_12_2d*dv2dx1_2d + tau_22_2d*dv2dx2_2d )
 #phi_2d = mu*(np.square(dv1dx2_2d) + np.square(dv2dx1_2d) + 2*(np.square(dv1dx1_2d) + np.square(dv2dx2_2d) + dv1dx2_2d*dv2dx1_2d))
-
+"""
 plt.imshow(phi_2d.T, cmap='hot', interpolation='nearest')
 plt.title('Phi')
 plt.colorbar()
 plt.show()
-
+"""
 #%% fråga om denna och fixa denna
 fig1,ax1 = plt.subplots()
-plt.subplots_adjust(left=0.25,bottom=0.20)
-plt.contourf(x1_2d,x2_2d,phi_2d,10000)
-plt.xlabel("$x_1$")
-plt.ylabel("$x_2$")
-plt.clim(0.1,10.)
-plt.title("contour phi plot")
-plt.axis([0,0.1,0,0.011]) # zoom-in on the first 0.1m from the inlet
+plt.subplots_adjust(left=0.25,bottom=0.10)
+plt.contourf(x1_2d[20:,:],x2_2d[20:,:],phi_2d[20:,:],100)
+plt.xlabel("$x_1$[m]")
+plt.ylabel("$x_2$[m]")
+plt.clim(0.1,15)
+plt.title("Dissipation for the developing flow and onwards",fontsize = 16,pad = 20)
+#plt.axis([0,0.1,0,0.01]) # zoom-in on the first 0.1m from the inlet
 plt.colorbar()
+plt.xticks(ticks = [0.05,0.25,0.45,0.63])
+plt.show()
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(phi_2d[0,:],x2_2d[0,:])
+plt.title('Dissipation at the inlet',pad = 15)
+plt.xlabel('$\Phi$ [J/s]')
+plt.ylabel('$x_2$[m]')
 plt.show()
 #plt.savefig('v1_grad.eps')
 #%%
@@ -219,31 +255,67 @@ for i in range(ni):
       tau[:,:,i,j] = np.array(( [tau_11_2d[i,j],tau_12_2d[i,j]] , [tau_12_2d[i,j],tau_22_2d[i,j]] ))
       lambda_[:,i,j], n[:,:,i,j] = np.linalg.eig(tau[:,:,i,j])
 
-plt.plot(x2_2d[index_99,:],lambda_[0,index_99,:], label = 'first eigenvalue')
-plt.plot(x2_2d[index_99,:],lambda_[1,index_99,:], label = 'second eigenvalue')
-plt.legend()
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(lambda_[0,index_99,:],x2_2d[index_99,:], label = 'first eigenvalue')
+plt.plot(lambda_[1,index_99,:],x2_2d[index_99,:], label = 'second eigenvalue')
+plt.legend(prop = {'size':15})
+plt.title(r'Eigenvalues of $\tau_{ij}$ for the fully developed flow',fontsize=16)
+plt.xlabel('Eigenvalue')
+plt.ylabel('$x_2$[m]')
 plt.show() # actually the eigenvalue for a corresponding eigenvector is lienar similar to tau 12 since eigenvectors are the same for all x_2 but magnitude differs
 # it is just that linalg.eig mixes the eigenvectors around from time to time hence the jumps in the plot
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(tau_12_2d[index_99,:],x2_2d[index_99,:], label = r'$\tau_{12}$')
+plt.plot(tau_11_2d[index_99,:],x2_2d[index_99,:], label = r'$\tau_{11}$')
+plt.plot(tau_22_2d[index_99,:],x2_2d[index_99,:], label = r'$\tau_{22}$')
+plt.legend(prop = {'size':15})
+plt.title(r'Values $\tau_{ij}$ for the fully developed flow',fontsize=16)
+plt.xlabel(r'$\tau_{ij}$')
+plt.ylabel('$x_2$[m]')
+plt.show()
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(tau_11_2d[index_99,:],x2_2d[index_99,:], label = r'$\tau_{11}$')
+plt.plot(tau_22_2d[index_99,:],x2_2d[index_99,:], label = r'$\tau_{22}$')
+plt.legend(prop = {'size':15})
+plt.title(r'Values $\tau_{ij}$ for the fully developed flow',fontsize=16)
+plt.xlabel(r'$\tau_{ij}$')
+plt.ylabel('$x_2$[m]')
+plt.show()
+"""
 for i in [0,1]:
    for j in [0,1]:
       plt.plot(x2_2d[index_99,:],tau[i,j,index_99,:],label = f'tau_{str(i+1) + str(j+1)}')
       plt.legend()
       plt.show()
+"""
 
 
 #%% C9
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.20,bottom=0.20)
 plt.quiver(x1_2d[::5,:],x2_2d[::5,:],n[0,0,::5,:],n[1,0,::5,:],scale = 70)
-plt.title('Normal vector')
+plt.title('First eigenvector $\hat{n}_1$')
+plt.xlabel('$x_1$[m]')
+plt.ylabel('$x_2$[m]')
 plt.show()
 #t = np.zeros((2,ni,nj))
 t_1 = n[:,0,:,:]*lambda_[0,:,:] #+ n[:,1,:,:]*lambda_[1,:,:]
 plt.quiver(x1_2d[::5,:],x2_2d[::5,:],t_1[0,::5,:],t_1[1,::5,:])
-plt.title('Traction_1')
+plt.title('t($\hat{n}_1$)')
+plt.xlabel('$x_1$[m]')
+plt.ylabel('$x_2$[m]')
 plt.show()
 
 t_2 = n[:,1,:,:]*lambda_[1,:,:]
 plt.quiver(x1_2d[::5,:],x2_2d[::5,:],t_2[0,::5,:],t_2[1,::5,:])
-plt.title('Traction_2')
+plt.title('t($\hat{n}_2$)')
+plt.xlabel('$x_1$[m]')
+plt.ylabel('$x_2$[m]')
 plt.show()
 
 
