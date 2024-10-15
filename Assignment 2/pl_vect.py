@@ -1,3 +1,4 @@
+#%%
 import scipy.io as sio
 import numpy as np
 import csv
@@ -6,6 +7,9 @@ from dphidx_dy import dphidx_dy
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 plt.rcParams.update({'font.size': 22})
 
+
+rho = 998.29#[kg/m^3]
+nu = 0.001003# [Pas]
 
 #--------------------------------------------------------------------------
 ni=200 #Do not change it.
@@ -78,7 +82,6 @@ v2_2d=np.zeros((ni,nj))
 te_2d=np.zeros((ni,nj))
 vist_2d=np.zeros((ni,nj))
 diss_2d=np.zeros((ni,nj))
-vist_2d=np.zeros((ni,nj))
 
 for j  in range (1,nj+1):
    for i  in range (1,ni+1):
@@ -167,6 +170,36 @@ uv_Exp_1=xh1[:,5] # Shear Reynolds stress (Re_xy) along wall-normal direction (x
 # You should find appropriate "i" corresponds to measurement x locations.
 #For example, "xh005.xy", "xh05.xy" and "xh1.xy" are the measurment data at x/h=0.05,x/h=0.5 and x/h=1, repectively.
 
+
+
+#%% AH 3.1
+
+v_b = np.array([np.trapz(v1_2d[i,:],x2_2d[i,:])/(x2_2d[i,-1]-x2_2d[i,0]) for i in range(ni)])
+P_b_ccm = np.array([np.trapz(p_2d[i,:],x2_2d[i,:])/(x2_2d[i,-1]-x2_2d[i,0]) for i in range(ni)])
+P_b_bernoulli = np.zeros(ni)
+P_b_bernoulli[0] = P_b_ccm[0]
+for i in range(1,ni):
+    P_b_bernoulli[i] = P_b_bernoulli[i-1] + rho*(v_b[i-1]**2 - v_b[i]**2)/2
+
+
+delta_dyn_pressure = rho*(v_b[-1]**2-v_b[0]**2)/2
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(x1_2d[:,0],P_b_bernoulli, label = 'Bernoulli')
+plt.plot(x1_2d[:,0],P_b_ccm, label = 'CCM+')
+#plt.plot(x1_2d[:,0],tau_theoretical, label = 'theoretical_lower')
+plt.title('Bulk preassure for CCM+ and Bernoulli')
+plt.legend()
+#plt.axis([0,1.5,0,0.01]) # set x & y axis
+plt.xlabel('$x_1$') 
+plt.ylabel('$P_b[Pa]$')
+plt.grid()
+plt.show()
+
+
+
+
+
+#%% plots
 #################################### plot v_1 vs. x_2 at x_1=hmax
 fig1,ax1 = plt.subplots()
 xx=hmax
@@ -203,6 +236,7 @@ plt.contourf(x1_2d,x2_2d,p_2d, 50)
 plt.xlabel("$x$")
 plt.ylabel("$y$")
 plt.title("contour pressure plot")
+plt.colorbar()
 plt.savefig('p_contour.eps')
 
 
@@ -231,3 +265,5 @@ plt.ylabel("$y$")
 plt.title("vector plot")
 plt.savefig('vect_python.eps')
 #
+
+# %%
