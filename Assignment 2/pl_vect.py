@@ -6,10 +6,12 @@ import matplotlib.pyplot as plt
 from dphidx_dy import dphidx_dy
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 plt.rcParams.update({'font.size': 22})
+import pandas as pd
 
 
 rho = 998.29#[kg/m^3]
 nu = 0.001003# [Pas]
+mu = nu*rho
 
 #--------------------------------------------------------------------------
 ni=200 #Do not change it.
@@ -195,9 +197,70 @@ plt.ylabel('$P_b[Pa]$')
 plt.grid()
 plt.show()
 
+#%% AH3.2
+Shear_top = pd.read_csv('Shear_top.csv')
+Shear_bottom = pd.read_csv('Shear_bottom.csv')
+C_f = np.zeros((ni,2)) #x1 coords, [top = 1,bot = 0]
+C_f[:,1] = Shear_top['Wall Shear Stress: Magnitude (Pa)'].values/(0.5*rho*v_b**2)
+C_f[:,0] = Shear_bottom['Wall Shear Stress: Magnitude (Pa)'].values/(0.5*rho*v_b**2)
+
+plt.subplots_adjust(left=0.20,bottom=0.20)
+plt.plot(x1_2d[:,0],C_f[:,0], label = 'bottom wall')
+plt.plot(x1_2d[:,0],C_f[:,1], label = 'top wall')
+#plt.plot(x1_2d[:,0],tau_theoretical, label = 'theoretical_lower')
+plt.title('Skin friction at the walls')
+plt.legend()
+#plt.axis([0,1.5,0,0.01]) # set x & y axis
+plt.xlabel('$x_1$') 
+plt.ylabel('$C_f$')
+plt.grid()
+plt.show()
+
+#%% AH3.3
+dv1dx1_2d= np.zeros((ni,nj))
+dv1dx2_2d= np.zeros((ni,nj))
+dv2dx1_2d= np.zeros((ni,nj))
+dv2dx2_2d= np.zeros((ni,nj))
+
+# note that the routine 'dphidx_dy' wants x_1 and x_2 at faces (of size (ni-1)x(nj-1))
+# Here we cheat a bit and give the coordinate at cell center (but using correct size (ni-1)x(nj-1))
+dv1dx1_2d,dv1dx2_2d = dphidx_dy(x1_2d[0:-1,0:-1],x2_2d[0:-1,0:-1],v1_2d)
+dv2dx1_2d,dv2dx2_2d = dphidx_dy(x1_2d[0:-1,0:-1],x2_2d[0:-1,0:-1],v2_2d)
+
+w3_2d = dv2dx1_2d-dv1dx2_2d
+
+fig1,ax1 = plt.subplots()
+climits = [-50,50]
+plt.subplots_adjust(left=0.25,bottom=0.10)
+plt.contourf(x1_2d,x2_2d,w3_2d,levels = np.linspace(climits[0],climits[1],100))
+plt.xlabel("$x_1$[m]")
+plt.ylabel("$x_2$[m]")
+plt.title("$\omega_3$ for the flow",fontsize = 16,pad = 20)
+#plt.axis([0,0.1,0,0.01]) # zoom-in on the first 0.1m from the inlet
+plt.colorbar(ticks = np.linspace(climits[0],climits[1],5))
+#plt.xticks(ticks = [0.05,0.25,0.45,0.63])
+plt.show()
 
 
 
+#%% AH3.4
+Field_params = pd.read_csv('Fieldparams_xh2.csv')
+mu_t = Field_params['Turbulent Viscosity (Pa-s)']
+X = Field_params['X (m)']
+Y = Field_params['Y (m)']
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.25,bottom=0.10)
+plt.tricontourf(X,Y,mu_t/mu,100)
+plt.xlabel("$x_1$[m]")
+plt.ylabel("$x_2$[m]")
+plt.title("$\mu_t / \mu$ for the flow",fontsize = 16,pad = 20)
+#plt.axis([0,0.1,0,0.01]) # zoom-in on the first 0.1m from the inlet
+plt.colorbar()#plt.colorbar(ticks = np.linspace(climits[0],climits[1],5))
+plt.xticks(ticks = [0.0,0.2,0.4])
+plt.show()
+
+#how the fuck do you plot mu_t/mu for specific X
 
 #%% plots
 #################################### plot v_1 vs. x_2 at x_1=hmax
