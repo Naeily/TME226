@@ -10,8 +10,8 @@ import pandas as pd
 
 
 rho = 998.29#[kg/m^3]
-mu = 0.001003# [Pas]
-nu = mu/rho
+mu = 0.001003# [Nms/kg]
+nu = mu/rho# [Pas]
 
 #--------------------------------------------------------------------------
 ni=200 #Do not change it.
@@ -244,23 +244,93 @@ plt.show()
 
 
 #%% AH3.4
+"""
 Field_params = pd.read_csv('Fieldparams_xh2.csv')
 mu_t = Field_params['Turbulent Viscosity (Pa-s)']
 X = Field_params['X (m)']
 Y = Field_params['Y (m)']
+plt.tricontourf(X,Y,mu_t/mu,20)
+"""
 
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.25,bottom=0.10)
-plt.tricontourf(X,Y,mu_t/mu,100)
+plt.contourf(x1_2d,x2_2d,vist_2d/mu,20)
 plt.xlabel("$x_1$[m]")
 plt.ylabel("$x_2$[m]")
 plt.title("$\mu_t / \mu$ for the flow",fontsize = 16,pad = 20)
 #plt.axis([0,0.1,0,0.01]) # zoom-in on the first 0.1m from the inlet
 plt.colorbar()#plt.colorbar(ticks = np.linspace(climits[0],climits[1],5))
-plt.xticks(ticks = [0.0,0.2,0.4])
+#plt.xticks(ticks = [0.0,0.2,0.4])
+plt.show()
+max_pos = np.where(vist_2d == np.max(vist_2d))
+print(f'the maximum turbulent viscosity is {np.max(vist_2d)}$[Ns/m^2]$ at x={x1_2d[max_pos[0][0],max_pos[1][0]]}[m], y={x2_2d[max_pos[0][0],max_pos[1][0]]}[m].')
+
+def x2_plus(x2,u_t,nu): #Kanske fixa så att vi använda endast x2[1:,:] och använder x2[0,:] som vägg höjd?
+    return (x2-x2[0])*u_t/nu
+u_t_bot = Shear_bottom['Ustar (m/s)'].values[::-1]
+x1_index = [70,100,130] #Somewhat deliberately only choose points where bot is at heigth 0
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.25,bottom=0.10)
+for i in x1_index:
+    plt.plot(vist_2d[i,:]/mu,x2_2d[i,:],label=f'x={round(x1_2d[i,0],3)}[m]')
+plt.grid()
+plt.xlabel('$\mu_t/\mu$')
+plt.ylabel('$x_2$')
+plt.title('$\mu_t/\mu$ vs $x_2$')
+plt.legend(prop = {'size':12})
 plt.show()
 
-#how the fuck do you plot mu_t/mu for specific X
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.25,bottom=0.10)
+for i in x1_index:
+    plt.plot(vist_2d[i,:]/mu,x2_plus(x2_2d[i,:],u_t_bot[i],nu),label=f'$x_1$={round(x1_2d[i,0],4)}[m]')
+plt.grid()
+plt.xlabel('$\mu_t/\mu$')
+plt.ylabel('$x_2^+$')
+plt.title('$\mu_t/\mu$ vs $x_2^+$')
+plt.legend(prop = {'size':12})
+plt.show()
+
+#%% AH3.5 Kanske plotta dessa some logaritmer
+x1_index = [3,100]
+dv1dx21_2d,dv1dx22_2d = dphidx_dy(x1_2d[0:-1,0:-1],x2_2d[0:-1,0:-1],dv1dx2_2d*nu)
+dv1dx11_2d,dv1dx12_2d = dphidx_dy(x1_2d[0:-1,0:-1],x2_2d[0:-1,0:-1],dv1dx1_2d*nu)
+dv2dx12_2d,dv2dx11_2d = dphidx_dy(x1_2d[0:-1,0:-1],x2_2d[0:-1,0:-1],dv2dx1_2d*nu)
+
+nudv1dx21_2d,nudv1dx22_2d = dphidx_dy(x1_2d[0:-1,0:-1],x2_2d[0:-1,0:-1],vist_2d*dv1dx2_2d/rho)
+nudv1dx11_2d,nudv1dx12_2d = dphidx_dy(x1_2d[0:-1,0:-1],x2_2d[0:-1,0:-1],vist_2d*dv1dx1_2d/rho)
+nudv2dx12_2d,nudv2dx11_2d = dphidx_dy(x1_2d[0:-1,0:-1],x2_2d[0:-1,0:-1],vist_2d*dv2dx1_2d/rho)
+
+viscdisp_2d = dv2dx12_2d+dv1dx22_2d+dv1dx11_2d*2
+turbdisp_2d = nudv2dx12_2d+nudv1dx22_2d+nudv1dx11_2d*2
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.25,bottom=0.10)
+for i in x1_index:
+    plt.plot(viscdisp_2d[i,:],x2_2d[i,:],label=f'viscous')
+    plt.plot(turbdisp_2d[i,:],x2_2d[i,:],label=f'turbulent')
+    plt.grid()
+    plt.xlabel('Diffusion')
+    plt.ylabel('$x_2$')
+    plt.title(f'Diffusion for $x_1$={round(x1_2d[i,0],4)}[m]')
+    plt.legend(prop = {'size':12})
+    plt.show()
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.25,bottom=0.10)
+for i in x1_index:
+    plt.plot(viscdisp_2d[i,:],x2_plus(x2_2d[i,:],u_t_bot[i],nu),label=f'viscous')
+    plt.plot(turbdisp_2d[i,:],x2_plus(x2_2d[i,:],u_t_bot[i],nu),label=f'turbulent')
+    plt.grid()
+    plt.xlabel('Diffusion')
+    plt.ylabel('$x_2^+$')
+    plt.title(f'Diffusion for $x_1$={round(x1_2d[i,0],4)}[m]')
+    plt.legend(prop = {'size':12})
+    plt.show()
+
+
+
+#%% AH3.6
 
 #%% plots
 #################################### plot v_1 vs. x_2 at x_1=hmax
