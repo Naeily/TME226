@@ -10,8 +10,8 @@ import pandas as pd
 
 
 rho = 998.29#[kg/m^3]
-nu = 0.001003# [Pas]
-mu = nu*rho
+mu = 0.001003# [Pas]
+nu = mu/rho
 
 #--------------------------------------------------------------------------
 ni=200 #Do not change it.
@@ -201,8 +201,8 @@ plt.show()
 Shear_top = pd.read_csv('Shear_top.csv')
 Shear_bottom = pd.read_csv('Shear_bottom.csv')
 C_f = np.zeros((ni,2)) #x1 coords, [top = 1,bot = 0]
-C_f[:,1] = Shear_top['Wall Shear Stress: Magnitude (Pa)'].values/(0.5*rho*v_b**2)
-C_f[:,0] = Shear_bottom['Wall Shear Stress: Magnitude (Pa)'].values/(0.5*rho*v_b**2)
+C_f[:,1] = Shear_top['Wall Shear Stress: Magnitude (Pa)'].values[::-1]/(0.5*rho*v_b**2)
+C_f[:,0] = Shear_bottom['Wall Shear Stress: Magnitude (Pa)'].values[::-1]/(0.5*rho*v_b**2)
 
 plt.subplots_adjust(left=0.20,bottom=0.20)
 plt.plot(x1_2d[:,0],C_f[:,0], label = 'bottom wall')
