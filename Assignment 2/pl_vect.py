@@ -263,16 +263,17 @@ plt.colorbar()#plt.colorbar(ticks = np.linspace(climits[0],climits[1],5))
 #plt.xticks(ticks = [0.0,0.2,0.4])
 plt.show()
 max_pos = np.where(vist_2d == np.max(vist_2d))
-print(f'the maximum turbulent viscosity is {np.max(vist_2d)}$[Ns/m^2]$ at x={x1_2d[max_pos[0][0],max_pos[1][0]]}[m], y={x2_2d[max_pos[0][0],max_pos[1][0]]}[m].')
+print(f'the maximum turbulent viscosity is {np.max(vist_2d)}$[Ns/m^2]$ at x_1={x1_2d[max_pos[0][0],max_pos[1][0]]}[m], y={x2_2d[max_pos[0][0],max_pos[1][0]]}[m].')
 
 def x2_plus(x2,u_t,nu): #Kanske fixa så att vi använda endast x2[1:,:] och använder x2[0,:] som vägg höjd?
     return (x2-x2[0])*u_t/nu
 u_t_bot = Shear_bottom['Ustar (m/s)'].values[::-1]
 x1_index = [70,100,130] #Somewhat deliberately only choose points where bot is at heigth 0
+#x1_index = [5,100,190]
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.25,bottom=0.10)
 for i in x1_index:
-    plt.plot(vist_2d[i,:]/mu,x2_2d[i,:],label=f'x={round(x1_2d[i,0],3)}[m]')
+    plt.plot(vist_2d[i,:]/mu,x2_2d[i,:],label=f'x_1={round(x1_2d[i,0],3)}[m]')
 plt.grid()
 plt.xlabel('$\mu_t/\mu$')
 plt.ylabel('$x_2$')
