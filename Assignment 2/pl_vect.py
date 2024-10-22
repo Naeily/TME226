@@ -7,6 +7,8 @@ from dphidx_dy import dphidx_dy
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 plt.rcParams.update({'font.size': 22})
 import pandas as pd
+import math
+import matplotlib.ticker as mticker
 
 
 rho = 998.29#[kg/m^3]
@@ -50,7 +52,8 @@ diss=np.zeros(nmax)
 vist=np.zeros(nmax)
 x=np.zeros(nmax)
 y=np.zeros(nmax)
-with open('./output_standard-keps-low-re.csv') as csv_file:
+#with open('./output_standard-keps-low-re.csv') as csv_file:
+with open('./FieldParams_xh2.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     n = 0  
     for row in csv_reader:
@@ -240,6 +243,32 @@ plt.title("$\omega_3$ for the flow",fontsize = 16,pad = 20)
 plt.colorbar(ticks = np.linspace(climits[0],climits[1],5))
 #plt.xticks(ticks = [0.05,0.25,0.45,0.63])
 plt.show()
+#%%
+fig1,ax1 = plt.subplots()
+#climits = [-50,50]
+plt.subplots_adjust(left=0.25,bottom=0.10)
+cax = plt.contourf(x1_2d[:40,:90],x2_2d[:40,:90],np.log10(abs(w3_2d[:40,:90])),levels = 100)
+plt.xlabel("$x_1$[m]")
+plt.ylabel("$x_2$[m]")
+plt.title("$log_{10}(|\omega_3|)$ for the flow",fontsize = 16,pad = 20)
+#plt.axis([0,0.1,0,0.01]) # zoom-in on the first 0.1m from the inlet
+#cbar = fig1.colorbar(caxticks = [1,2,3,4], format = mticker.FixedFormatter(['$10^{-1}$','$10^{-2}$','$10^{-3}$','$10^{-4}$']))
+plt.colorbar()
+#plt.xticks(ticks = [0.05,0.25,0.45,0.63])
+plt.show()
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.25,bottom=0.10)
+plt.contourf(x1_2d,x2_2d,vist_2d/mu,20)
+plt.xlabel("$x_1$[m]")
+plt.ylabel("$x_2$[m]")
+plt.title("$\mu_t / \mu$ for the flow",fontsize = 16,pad = 20)
+#plt.axis([0,0.1,0,0.01]) # zoom-in on the first 0.1m from the inlet
+plt.colorbar()#plt.colorbar(ticks = np.linspace(climits[0],climits[1],5))
+#plt.xticks(ticks = [0.0,0.2,0.4])
+plt.show()
+max_pos = np.where(vist_2d == np.max(vist_2d))
+print(f'the maximum turbulent viscosity is {np.max(vist_2d)}$[Ns/m^2]$ at x_1={x1_2d[max_pos[0][0],max_pos[1][0]]}[m], y={x2_2d[max_pos[0][0],max_pos[1][0]]}[m].')
 
 
 
@@ -332,6 +361,110 @@ for i in x1_index:
 
 
 #%% AH3.6
+
+#mu_t = Field_params['Turbulent Viscosity (Pa-s)']
+
+P_k = vist_2d/rho * (2*dv1dx1_2d**2 + dv1dx2_2d**2 + 2*dv2dx2_2d**2 + dv2dx1_2d**2 + 2*dv1dx2_2d*dv2dx1_2d)
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.25,bottom=0.10)
+plt.contourf(x1_2d,x2_2d,P_k,100)
+#plt.grid()
+plt.colorbar()
+plt.xlabel('$x_1$')
+plt.ylabel('$x_2$')
+plt.title(f'the produktion term $P^k$',pad=15)
+#plt.legend(prop = {'size':12})
+plt.xticks(ticks = [0.00,0.11,0.22,0.33,0.44])
+plt.show()
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.25,bottom=0.10)
+plt.contourf(x1_2d,x2_2d,te_2d,100)
+#plt.grid()
+plt.colorbar()
+plt.xlabel('$x_1$')
+plt.ylabel('$x_2$')
+plt.title(f'the turbulent kinetic energy k',pad=15)
+#plt.legend(prop = {'size':12})
+plt.xticks(ticks = [0.00,0.11,0.22,0.33,0.44])
+plt.show()
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.25,bottom=0.10)
+plt.contourf(x1_2d,x2_2d,vist_2d,100)
+#plt.grid()
+plt.colorbar()
+plt.xlabel('$x_1$')
+plt.ylabel('$x_2$')
+plt.title(f'turbulent viscosity $\mu_t$',pad=15)
+#plt.legend(prop = {'size':12})
+plt.xticks(ticks = [0.00,0.11,0.22,0.33,0.44])
+plt.show()
+
+#%%AH3.7
+#diss_2d = epsilon
+eps_top = 2*nu*te_2d[:,-1]/(abs(x2_2d[:,-1]-0.15175)**2)
+eps_bot = 2*nu*te_2d[:,1]/(abs(x2_2d[:,1]-x2_2d[:,0])**2)
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.25,bottom=0.10)
+plt.plot(x1_2d[:,-3],diss_2d[:,-3],label='Simulated',)
+plt.plot(x1_2d[:,-3],eps_top,label='Calculated',linestyle = '--')
+plt.grid()
+plt.legend()
+plt.xlabel('$x_1$')
+plt.ylabel('$\epsilon[m^2/s^3]$')
+plt.title('$\epsilon$ at the top wall',pad=15)
+#plt.legend(prop = {'size':12})
+plt.xticks(ticks = [0.00,0.11,0.22,0.33,0.44])
+plt.show()
+
+fig1,ax1 = plt.subplots()
+plt.subplots_adjust(left=0.25,bottom=0.10)
+plt.plot(x1_2d[:,1],diss_2d[:,1],label='Simulated')
+plt.plot(x1_2d[:,1],eps_bot,label='Calculated')
+plt.grid()
+plt.legend()
+plt.xlabel('$x_1$')
+plt.ylabel('$\epsilon[m^2/s^3]$')
+plt.title('$\epsilon$ at the bottom wall',pad=15)
+#plt.legend(prop = {'size':12})
+plt.xticks(ticks = [0.00,0.11,0.22,0.33,0.44])
+plt.show()
+
+#%%AH3.9
+"""
+xh1=np.genfromtxt("xh1.xy", comments="%")
+y_1=xh1[:,0] # x_2 coordinates, wall-normal direction.
+v1_Exp_1=xh1[:,1]
+"""
+hmax = 0.05
+hmult_list = [0.005,0.05,1,2,3,4,5,6,8]
+hmult_str_list = ['005','05','1','2','3','4','5','6','8']
+for string,hmult in zip(hmult_str_list,hmult_list):
+    x1_current = hmult*hmax
+    min_index = np.argmin(abs(x1_2d-x1_current)) #% 0.05 = x/h = 1
+    min_index_2d = np.unravel_index(min_index, x1_2d.shape)
+    real_min_index = min_index_2d[0]
+    xh=np.genfromtxt("xh" + string + ".xy", comments="%")
+    y=xh[:,0] # x_2 coordinates, wall-normal direction.
+    v1_Exp=xh[:,1]
+
+    fig1,ax1 = plt.subplots()
+    plt.subplots_adjust(left=0.25,bottom=0.10)
+    plt.plot(v1_2d[real_min_index,:],x2_2d[real_min_index,:],label = 'Simulated')
+    plt.plot(v1_Exp,y,label = 'Experimental') #%% v1 och y1 till gerneral loop
+    plt.grid()
+    plt.legend(prop = {'size':12})
+    plt.xlabel('$v_1[m/s]$')
+    plt.ylabel('$x_2$[m]')
+    plt.title(f'$v_1$ for $x_1$={np.round(x1_current,5)}',pad=15)
+    #plt.legend(prop = {'size':12})
+    #plt.xticks(ticks = [0.00,0.11,0.22,0.33,0.44])
+    plt.show()
+#%%
+#diss = epsilon
 
 #%% plots
 #################################### plot v_1 vs. x_2 at x_1=hmax
