@@ -297,12 +297,12 @@ print(f'the maximum turbulent viscosity is {np.max(vist_2d)}$[Ns/m^2]$ at x_1={x
 def x2_plus(x2,u_t,nu): #Kanske fixa så att vi använda endast x2[1:,:] och använder x2[0,:] som vägg höjd?
     return (x2-x2[0])*u_t/nu
 u_t_bot = Shear_bottom['Ustar (m/s)'].values[::-1]
-x1_index = [70,100,130] #Somewhat deliberately only choose points where bot is at heigth 0
-#x1_index = [5,100,190]
+#x1_index = [70,100,130] #Somewhat deliberately only choose points where bot is at heigth 0
+x1_index = [5,100,190]
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.25,bottom=0.10)
 for i in x1_index:
-    plt.plot(vist_2d[i,:]/mu,x2_2d[i,:],label=f'x_1={round(x1_2d[i,0],3)}[m]')
+    plt.plot(vist_2d[i,:]/mu,x2_2d[i,:]-x2_2d[i,0],label=f'$x_1$={round(x1_2d[i,0],3)}[m]')
 plt.grid()
 plt.xlabel('$\mu_t/\mu$')
 plt.ylabel('$x_2$')
@@ -346,6 +346,15 @@ for i in x1_index:
     plt.legend(prop = {'size':12})
     plt.show()
 
+    plt.plot(viscdisp_2d[i,20:-20],x2_2d[i,20:-20],label=f'viscous')
+    plt.plot(turbdisp_2d[i,20:-20],x2_2d[i,20:-20],label=f'turbulent')
+    plt.grid()
+    plt.xlabel('Diffusion')
+    plt.ylabel('$x_2$')
+    plt.title(f'Diffusion for $x_1$={round(x1_2d[i,0],4)}[m], without edges.')
+    plt.legend(prop = {'size':12})
+    plt.show()
+
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.25,bottom=0.10)
 for i in x1_index:
@@ -357,7 +366,6 @@ for i in x1_index:
     plt.title(f'Diffusion for $x_1$={round(x1_2d[i,0],4)}[m]')
     plt.legend(prop = {'size':12})
     plt.show()
-
 
 
 #%% AH3.6
