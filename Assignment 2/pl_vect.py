@@ -233,7 +233,7 @@ dv2dx1_2d,dv2dx2_2d = dphidx_dy(x1_2d[0:-1,0:-1],x2_2d[0:-1,0:-1],v2_2d)
 w3_2d = dv2dx1_2d-dv1dx2_2d
 
 fig1,ax1 = plt.subplots()
-climits = [-50,50]
+climits = [-14000,-70]
 plt.subplots_adjust(left=0.25,bottom=0.10)
 plt.contourf(x1_2d,x2_2d,w3_2d,levels = np.linspace(climits[0],climits[1],100))
 plt.xlabel("$x_1$[m]")
@@ -376,9 +376,10 @@ P_k = vist_2d/rho * (2*dv1dx1_2d**2 + dv1dx2_2d**2 + 2*dv2dx2_2d**2 + dv2dx1_2d*
 
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.25,bottom=0.10)
-plt.contourf(x1_2d,x2_2d,P_k,100)
+climits = [0,0.05]
+plt.contourf(x1_2d,x2_2d,P_k,levels = np.linspace(climits[0],climits[1],100))
 #plt.grid()
-plt.colorbar()
+plt.colorbar(ticks = np.linspace(climits[0],climits[1],5))
 plt.xlabel('$x_1$')
 plt.ylabel('$x_2$')
 plt.title(f'the produktion term $P^k$',pad=15)
@@ -417,8 +418,8 @@ eps_bot = 2*nu*te_2d[:,1]/(abs(x2_2d[:,1]-x2_2d[:,0])**2)
 
 fig1,ax1 = plt.subplots()
 plt.subplots_adjust(left=0.25,bottom=0.10)
-plt.plot(x1_2d[:,-3],diss_2d[:,-3],label='Simulated',)
-plt.plot(x1_2d[:,-3],eps_top,label='Calculated',linestyle = '--')
+plt.plot(x1_2d[:,-1],diss_2d[:,-1],label='Simulated',)
+plt.plot(x1_2d[:,-1],eps_top,label='Calculated',linestyle = '--')
 plt.grid()
 plt.legend()
 plt.xlabel('$x_1$')
